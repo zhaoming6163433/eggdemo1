@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>随机</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        html{
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            background: url('public/images/back1.jpg') no-repeat;
+            background-size: cover;
+            background-position: top center;
+            width:100%;
+        }
+        .luck-content{position: absolute; top: 20%; bottom:20%; left:20%; right:20%; background: rgba(0,0,0,.6); padding: 20px; border-radius: 5px; padding-right:260px;}
+
+        .luck-user{position: absolute;color:#fff; left: 50%;    margin-left: -120px;top: 40%; bottom: 70px; width: 240px; background-color: rgba(255,255,255,.2); border-radius: 5px;}
+        .luck-user-list{list-style-type: none; margin: 0; overflow-y:scroll; position: absolute; top: 50px; bottom: 10px; width: 100%;}
+        .luck-user-list>li{margin-top: 10px; position: relative;}
+        .luck-user-list>li div.portrait{height: 30px; width: 30px; border-radius: 5px; background-position: center; background-size: cover;}
+        .luckuserName{line-height: 30px; position: absolute; top: 0; left:10px; right: 0;text-align:center;}
+        .luck-user-title{position: absolute; width: 90%; display: block; text-align: center; line-height: 40px; left: 5%; color: #f5b43a; font-weight: bold;}
+        .luck-user-title::before{position: absolute; content: ""; top: 100%; left: 0; width: 100%; background:-webkit-linear-gradient(left,rgba(248,215,59,0),#f0d03a,rgba(248,215,59,0)); height:1px;}
+
+        .luck-user-btn{position: absolute; bottom: 20px; left: 5%; width: 90%; text-align: center; line-height: 40px; cursor: pointer;}
+        .luck-user-btn>a{background: #f29807; width: 100%; line-height: 40px; display: block; border-radius: 5px; text-decoration: none; color: #fff;}
+        .luck-user-btn>a:hover{background: #fcb842;}
+
+        .luck-title{text-align: center; margin-bottom: 20px;}
+
+        .luck-content-btn{width: 100%; text-align: center; line-height: 40px; padding-top: 20px; overflow: hidden;}
+        .luck-content-btn a{background: #f29807; width:150px; text-decoration: none; display: inline-block; color: #fff; text-align: center; margin: 0 10px; cursor: pointer;}
+        .luck-content-btn a:hover{background: #fcb842; }
+
+        .luck-title{font-size: 20px;}
+
+        .slotMachine{ width:200px; height: 200px; display: block; text-align: center; background-color: #ffffff; border-radius: 5px; margin: 0 auto; border:#f5ad18 4px solid; position: relative;}
+        .slotMachine .slot{ width:100%; height:100%; background-size: cover; background-position: center; position: absolute;}
+        .slotMachine .slot>span{position: absolute; bottom: 0; left: 0; line-height: 50px; text-decoration: center; background-color: rgba(0,0,0,.5); width: 100%;}
+
+        ::-webkit-scrollbar{width: 10px;  height: 16px;  border-radius: 6px;}
+        ::-webkit-scrollbar-track{border-radius:6px;  background-color: rgba(255,255,255,.2);}
+        ::-webkit-scrollbar-thumb{border-radius: 6px;  background-color: #fff;}
+
+        .luck-img{width: 100%; padding-top: 100%; background-position: center; background-size: cover;}
+        .container {
+            height: 100%;
+            width: 400px;
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            margin: -100px 0 0 -200px;
+            text-align: center;
+        }
+
+        .result-box {
+            background-color: rgba(255,255,255,0.8);
+            text-align: center;
+            line-height: 60px;
+            font-size: 34px;
+        }
+
+        button {
+            width: 200px;
+            height: 50px;
+            line-height: 50px;
+            margin-top: 30px;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .start {
+            background-color: rgba(0,0,0,0.6);
+            border-radius: 10px;
+        }
+
+        .end {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .arrow_box{animation: glow 800ms ease-out infinite alternate; }
+        @keyframes glow {
+    0% {
+        border-color: rgb(255, 115, 0);
+        box-shadow: 0 0 5px rgba(255, 0, 212, 0.2), inset 0 0 5px rgba(180, 0, 255, 0.903), 0 1px 0 #f51010;
+    }
+    100% {
+        border-color: rgb(253, 0, 139);
+        box-shadow: 0 0 20px #FF5722, inset 0 0 10px #F44336, 0 1px 0 #fb1905;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="result-box arrow_box">
+            谁是幸运儿？
+        </div>
+        <!--result-box-->
+        <button class="start" onClick="start()">开始</button>
+    </div>
+    <div class="luck-user">
+        <div class="luck-user-title">
+            <span>抽中名单</span>
+        </div>
+        <ul class="luck-user-list"></ul>
+    </div>
+    <script type="text/javascript" src="public/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        var data = ["曹林","刘帅朝","黄乐乐","王恒","赵明","石薇","张晨","张英伦","王文娟","桑杰","万萌","孙浩博","于思禹"]; //参与人员
+        //内定中奖人员
+        var p1Num = 3; //一等奖数量	
+        var p2Num = 5; //二等奖数量
+        var p3Num = 10; //三等奖数量
+        var p1Winner = new Array(); //一等奖中奖者
+        var p2Winner = new Array(); //二等奖中奖者
+        var p3Winner = new Array(); //三等奖中奖者
+        var btn = true; //按钮状态未开始还是结束
+        var key = 0; //中奖下标
+        var time = 0; //定时器
+
+        function runTime() {
+            //$("button").show();
+            clearInterval(time);
+            time = setInterval('trunNum()', 10);
+        }
+
+        //点击按钮
+        function start() {
+            if (btn) {
+                if ((p1Winner.length >= p1Num) && (p2Winner.length >= p2Num) && (p3Winner.length >= p3Num)) {
+                    $("button").hide();
+                    alert('所有抽奖已结束！！！');
+                } else if (($("select").val() == 3) && (p3Winner.length >= p3Num)) {
+                    alert("三等奖已抽取完毕，请选择其他奖项……");
+                } else if (($("select").val() == 2) && (p2Winner.length >= p2Num)) {
+                    alert("二等奖已抽取完毕，请选择其他奖项……");
+                } else if (($("select").val() == 1) && (p1Winner.length >= p1Num)) {
+                    alert("一等奖已抽取完毕，请选择其他奖项……");
+                } else {
+                    btn = false;
+                    $("button").removeClass("start").addClass("end").text("结束");
+                    startTrun();
+                }
+
+
+            } else {
+                btn = true;
+                $("button").removeClass("end").addClass("start").text("开始");
+                endTrun();
+            }
+        }
+
+        function trunNum() {
+            key = Math.floor(Math.random() * (data.length - 1));
+            try{
+                var tel = data[key];
+                $(".result-box").text(tel);
+            }catch(e){
+
+            }
+        }
+
+        //开始转动数字
+        function startTrun() {
+            runTime();
+        }
+
+        //停止转动数字
+        function endTrun() {
+            clearInterval(time);
+            if ($("select").val() == 3) {
+                data.splice(key, 1);
+                p3Winner.push(data[key]);
+                console.log(p3Winner);
+                console.log('总参与人员数量：' + data.length);
+            } else if ($("select").val() == 2) {
+                data.splice(key, 1);
+                p2Winner.push(data[key]);
+                console.log(p2Winner);
+                console.log('总参与人员数量：' + data.length);
+            } else {
+                console.log(data);
+                console.log(key)
+                if(data[key]){
+                    p1Winner.push(data[key]);
+                    $(".luck-user-list").append('<li><div class="portrait" ></div><div class="luckuserName">'+data[key]+'</div></li>');
+                    var scrollHeight = $('.luck-user-list').prop("scrollHeight");
+                    $('.luck-user-list').scrollTop(scrollHeight,200);
+                    console.log(p1Winner);
+                    console.log('总参与人员数量：' + data.length);
+                }
+                data.splice(key, 1);
+            }
+        }
+    </script>
+</body>
+
+</html>
